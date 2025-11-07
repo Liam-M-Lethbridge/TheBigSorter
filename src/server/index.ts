@@ -1,5 +1,5 @@
 import express from "express"
-import  { createNewTable, getTables, insertIntoTable, readTable } from "./db.ts"
+import  { createNewTable, getTables, insertIntoTable, readTable, deleteTable, clearDatabase } from "./db.ts"
 import type { tableCreator, tableInserter} from "@/types/reqTypes"
 import cors from 'cors'
 const app = express()
@@ -15,10 +15,8 @@ app.get('/', (req, res) => {
   res.send()
 })
 
-app.post('/message', (req, res) => {
-  const { message } = req.body
-  console.log("Received message:", message)
-  res.json({ status: "ok", echo: message })
+app.delete("/api/tables", async (req,res) => {
+  clearDatabase()
 })
 
 // Get all tables
@@ -64,6 +62,17 @@ app.post("/api/table", async (req, res) => {
   } catch (err) {
     console.error(err)
     res.status(500).send("Error inserting data")
+  }
+
+})
+
+app.post(`/api/deltable`, async (req, res) => {
+  const body = req.body as tableCreator
+  try{
+    await deleteTable(body.tableName)
+  } catch (err){
+    console.error(err)
+    res.status(500).send("Error deleting table")
   }
 
 })

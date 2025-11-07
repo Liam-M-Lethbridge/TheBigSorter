@@ -30,6 +30,12 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 npm install
 ```
 
+### Run server for database
+
+```sh
+npx ts-node src/server/index.ts
+```
+
 ### Compile and Hot-Reload for Development
 
 ```sh

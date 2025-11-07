@@ -2,14 +2,14 @@
 import theBigSorter from "./bigLogo.vue";
 </script>
 <template>
-  <bar>
+  <div class="bar">
     <router-link to="/" class="text">
       HOME PAGE</router-link>
     <the-big-sorter/>
-  </bar>
+    </div>
 </template>
 <style scoped>
-bar{
+.bar{
   display: flex;
   background-color: black;
   font-size: medium;

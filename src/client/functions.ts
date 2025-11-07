@@ -32,3 +32,8 @@ export async function insertRow(tableName: string, attributes: string, values: s
   })
   console.log("Inserted:", res.data)
 }
+
+export async function deleteTable(tableName:string){
+  const res = await api.post(`/deltable`, {tableName})
+  console.log("delted:", res.data)
+}

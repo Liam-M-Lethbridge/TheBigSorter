@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import topBar from "../components/topBar.vue"
 import { onMounted, ref } from "vue"
-import { getAllTables } from "../functions"
+import { getAllTables, deleteTable } from "../functions"
 const isEmpty = ref(true)
 // const data = ref<{[k:string]: string}[]>([])
 const data = ref<{table_name: string}[]>([])
@@ -9,14 +9,25 @@ onMounted(async ()=>{
   data.value = (await getAllTables())
   console.log(data)
   isEmpty.value = (data.value.length===0)
+
 }
 )
+
+function removeTable(item: {table_name:string}){
+deleteTable(item.table_name)
+const index = data.value.indexOf(item)
+if (index > -1) { // only splice array when item is found
+  data.value.splice(index, 1); // 2nd parameter means remove one item only
+}
+isEmpty.value = (data.value.length===0)
+}
+
 </script>
 
 <template>
   <top-bar/>
   <div class="background">
-    <li v-for="item in data" :key="item['table_name']"><p class="row">{{ item["table_name"] }} <button class="delete" style="float:right;">X</button></p></li>
+    <li v-for="item in data" :key="item['table_name']"><p class="row">{{ item["table_name"] }} <button class="delete" @click="removeTable(item)" style="float:right;">X</button></p></li>
     <div v-if="isEmpty" class="empty">
       Wow such empty...
     </div>
@@ -25,12 +36,7 @@ onMounted(async ()=>{
 
 <style scoped>
 
-div{
-  font-family: Impact;
-  background-color: #040422;
-  width: 100vw;
-  height: 100vh;
-}
+
 li{
   list-style-type: none;
 }
@@ -53,7 +59,9 @@ li{
 .background{
   display: flex;
   flex-direction: column;
-
+  font-family: Impact;
+  width: 100vw;
+  height: 100vh;
   align-items:center;
   background-color: #1a1a31;
 }

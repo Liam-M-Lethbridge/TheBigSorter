@@ -1,3 +1,4 @@
+import { error } from 'console';
 import postgres from 'postgres';
 const database =  'TheBigSorter';
 const pg_user =  process.env.USER || 'postgres';
@@ -40,8 +41,24 @@ export async function createNewTable(tableName: string, attributes: string[]) {
   await sql.unsafe(query) // "unsafe" lets you run a raw string
 }
 
-export async function deleteTable(tableName: string){
-  await sql`DROP TABLE IF EXISTS ${tableName}`
+export async function deleteTable(tableName: string) {
+  const safeName = tableName.replace(/[^a-zA-Z0-9_]/g, "")
+  try{
+  await sql.unsafe(`DROP TABLE IF EXISTS "${safeName}"`)
+  } catch (err){
+    console.log(err)
+    console.log("invalid table name")
+  }
+
+}
+
+export async function clearDatabase(){
+await sql`DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO public;
+COMMENT ON SCHEMA public IS 'standard public schema';
+`
 }
 
 export async function insertIntoTable(tableName: string, attributes: string, values: string) {
