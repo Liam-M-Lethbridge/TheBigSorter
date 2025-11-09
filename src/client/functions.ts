@@ -1,5 +1,5 @@
 import axios from "axios"
-
+import { type Criteria } from "@/types/reqTypes"
 const api = axios.create({
   baseURL: "http://localhost:9001/api",
 })
@@ -16,10 +16,10 @@ export async function getAllTables() {
   return res.data
 }
 
-export async function createTable(tableName: string, attributes: string[]) {
+export async function createTable(tableName: string, tableCriteria: Criteria[]) {
   const res = await api.post("/table", {
     tableName: tableName,
-    attributes: attributes,
+    attributes: tableCriteria,
   })
   console.log("Created table:", res.data)
 }

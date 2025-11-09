@@ -1,4 +1,4 @@
-import { error } from 'console';
+import { Criteria } from '../types/reqTypes.ts';
 import postgres from 'postgres';
 const database =  'TheBigSorter';
 const pg_user =  process.env.USER || 'postgres';
@@ -25,14 +25,14 @@ try {
 export default sql;
 
 // had to use sql.unsafe to dynamically do table generation
-export async function createNewTable(tableName: string, attributes: string[]) {
+export async function createNewTable(tableName: string, attributes: Criteria[]) {
   // ✅ Sanitize table name: allow only letters, numbers, and underscores
   const safeTableName = tableName.replace(/[^a-zA-Z0-9_]/g, "")
 
   // ✅ Sanitize and build column list
   const safeColumns = attributes
-    .map(attr => attr.replace(/[^a-zA-Z0-9_]/g, "")) // prevent injection
-    .map(attr => `"${attr}" TEXT`) // wrap in double quotes for case safety
+    .map(attr => new Criteria(attr.criterion_name.replace(/[^a-zA-Z0-9_]/g, ""), attr.weighting, 0)) // prevent injection
+    .map(attr => `"${attr.criterion_name}" TEXT`) // wrap in double quotes for case safety
     .join(", ")
 
   // ✅ Build full query string
