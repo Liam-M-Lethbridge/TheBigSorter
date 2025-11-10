@@ -12,6 +12,6 @@
 <style scoped>
 .theBigSorter{
   color: coral;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-family: Impact;
 }
 </style>

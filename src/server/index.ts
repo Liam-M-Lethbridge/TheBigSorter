@@ -1,9 +1,11 @@
 import express from "express"
-import  { createNewTable, getTables, insertIntoTable, readTable, deleteTable, clearDatabase } from "./db.ts"
+import  { createNewTable, getTables, insertIntoTable, readTable, deleteTable, clearDatabase, createWeightTable, deleteWeightTable } from "./db.ts"
 import type { tableCreator, tableInserter} from "@/types/reqTypes"
 import cors from 'cors'
 const app = express()
 const port = 9001
+// deleteWeightTable()
+createWeightTable()
 
 app.use(express.json())
 app.use(cors({
@@ -18,6 +20,8 @@ app.get('/', (req, res) => {
 app.delete("/api/tables", async (req,res) => {
   clearDatabase()
 })
+
+
 
 // Get all tables
 app.get("/api/tables", async (req, res) => {

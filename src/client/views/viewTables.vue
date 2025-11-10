@@ -14,12 +14,12 @@ onMounted(async ()=>{
 )
 
 function removeTable(item: {table_name:string}){
-deleteTable(item.table_name)
-const index = data.value.indexOf(item)
-if (index > -1) { // only splice array when item is found
-  data.value.splice(index, 1); // 2nd parameter means remove one item only
-}
-isEmpty.value = (data.value.length===0)
+  deleteTable(item.table_name)
+  const index = data.value.indexOf(item)
+  if (index > -1) { // only splice array when item is found
+    data.value.splice(index, 1); // 2nd parameter means remove one item only
+  }
+  isEmpty.value = (data.value.length===0)
 }
 
 </script>
@@ -27,7 +27,11 @@ isEmpty.value = (data.value.length===0)
 <template>
   <top-bar/>
   <div class="background">
-    <li v-for="item in data" :key="item['table_name']"><p class="row">{{ item["table_name"] }} <button class="delete" @click="removeTable(item)" style="float:right;">X</button></p></li>
+    <li v-for="item in data" :key="item['table_name']" class="list">
+      <p class="row">{{ item["table_name"] }}
+        <button class="delete" @click="removeTable(item)" style="float:right;">X</button>
+      </p>
+    </li>
     <div v-if="isEmpty" class="empty">
       Wow such empty...
     </div>
@@ -37,24 +41,23 @@ isEmpty.value = (data.value.length===0)
 <style scoped>
 
 
-li{
+.list{
   list-style-type: none;
+  width: 100%;
 }
 .empty{
-  color:white
-}
-.homePage{
-  background-color:black;
-  border:none;
-  color: white;
-  width: 50vw;
-  height: 5vh;
-  text-align: left;
-}
-.delete{
-  background-color: #222244;
-  /* background-color: #222244; */
+  color: #fdfdff
 
+}
+
+.delete{
+  color: coral;
+  background-color: #292d2f;
+  border-radius: 5px;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+  border-width: 3px;
+  font-family: Impact;
 }
 .background{
   display: flex;
@@ -63,18 +66,20 @@ li{
   width: 100vw;
   height: 100vh;
   align-items:center;
-  background-color: #1a1a31;
+  background-image:linear-gradient(to bottom right, #393d3f, #292d2f);
 }
 .row{
-  background-color: #222244;
-  font-family: serif;
-  width: 100vw;
-  border-color: aliceblue;
-  border-width: 1px;
-  color:aliceblue;
   box-sizing: border-box;
+  display: flex;
+  width:100%;
+  justify-content: space-between;
+  background-color: grey;
+  border-bottom: 1px solid #000000;
+  font-family: Impact;
+  padding-bottom:2px;
+  padding-top:2px;
+  padding-left: 20px;
   padding-right: 20px;
-  padding-left:30px;
-  margin: 0;
+  color: #fdfdff;
 }
 </style>

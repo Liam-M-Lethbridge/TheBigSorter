@@ -33,56 +33,95 @@ function deleteCriteria(criterion:Criteria){
   <div class="background">
 
     <div class="preview">
-    <!-- <form @submit.prevent="createNewTable" > -->
       <input v-model="name" minlength="1" placeholder="[New datatype...]" class = "name" @keypress="filterForSQL" />
-      <li v-for="criterion in criteriaList" :key="criterion.id" class="stretch" >
+      <li v-for="criterion in criteriaList" :key="criterion.id" >
+        <div class="row">
+          Name:
           <input v-model="criterion.criterion_name" minlength="1" placeholder="Input criteria" class = "criteriaName" @keypress="filterForSQL"/>
+          Weight:
           <input v-model="criterion.weighting" minlength="1" maxlength="5" placeholder="Weight" class = "criteriaWeight" @keypress="allowOnlyNumbers"/>
           <button @click="deleteCriteria(criterion)">DEL</button>
+        </div>
       </li>
 
-    <!-- </form> -->
-    <button @click="add_criteria">Add criteria</button>
-    <button @click="createNewTable">Create Table</button>
-  </div>
+      <button @click="add_criteria" class="addCriteria">Add criteria</button>
+      <button @click="createNewTable" class="addTable">Create Table</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.stretch{
+.addCriteria{
+  width:auto;
+  font-size: 15px;
+  padding: 2px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  background-color: #292D2F;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+  border-width: 3px;
+  color:coral;
+  border-radius: 15px;
+  margin: 2px;
+}
+.addTable{
+  width:auto;
+  padding: 20px;
+  font-size: 40px;
+  font-family: Impact;
+  background-color: #292D2F;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+  border-width: 3px;
+  color:coral;
+  border-radius: 15px;
+  margin: 2px;
+  margin-top: auto;
+}
+.row{
+  box-sizing: content-box;
   display: flex;
   width:100%;
-  justify-content: space-between;
+  justify-content: space-around;
+  border-bottom: 1px solid #000000;
+  font-family: Impact;
+  padding-bottom:2px;
+  background-image:linear-gradient(to bottom right, #595d5f, #494d4f);
+
 }
 .criteriaWeight{
-  background-color: rgb(0, 0, 0);
+  background-color: rgba(0,0,0,0);
   color: rgb(255, 255, 255);
   font-size: medium;
   padding: 0px;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  border:0px;
+  font-family: Impact;
   min-width: 10%;
   max-width: 20%;
-
   text-align: center;
 }
 .criteriaName{
-  background-color: rgb(0, 0, 0);
+  background-color: grey;
+  background-color: rgba(0,0,0,0);
   color: rgb(255, 255, 255);
   font-size: medium;
   padding: 0px;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  border: 0px;
+  font-family: Impact;
   min-width: 50%;
   text-align: left;
 }
 .preview{
   display: flex;
-  width:40vw;
-  height: 60vh;
-  background-color: black;
+  width:50vw;
+  background-image:linear-gradient(to bottom right, #595d5f, #494d4f);
   text-align: center;
-  border-radius: 20px;
+  border-radius: 15px;
   flex-direction: column;
   align-items: stretch;
+  height:fit-content;
+  min-height: 60vh;
+  margin-top: 10vh;
 }
 .critera{
   min-height: 20;
@@ -111,21 +150,22 @@ function deleteCriteria(criterion:Criteria){
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  align-items: center;
-  background-color: #1a1a31;
-  max-height: 95vh;
-  min-height: 90vh;
+  /* align-items: center; */
+  background-image:linear-gradient(to bottom right, #393d3f, #292d2f);
+  min-height:95vh;
+  height: fit-content;
 }
 .name{
-  background-color: grey;
-  color: rgb(13, 8, 45);
-  font-size: medium;
-  padding: 0px;
+  background-color: #292D2F;
+  color: #fdfdff;
+  font-size: 20px;
+  padding: 2px;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
   /* width: 100%; */
   text-align: center;
-  border-radius: 10px;
 
+  border-radius: 15px;
+  margin: 2px;
 }
 
 
@@ -135,7 +175,7 @@ function deleteCriteria(criterion:Criteria){
 
 }
 li{
-  color: white;
+  color: #fdfdff;
   list-style: none;
 }
 

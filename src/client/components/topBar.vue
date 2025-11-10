@@ -11,14 +11,17 @@ import theBigSorter from "./bigLogo.vue";
 <style scoped>
 .bar{
   display: flex;
-  background-color: black;
+  background-color: #191D1F;
   font-size: medium;
   width: 100vw;
   flex-direction: row;
   justify-content:space-around;
   align-items: center;
+  font-family: Impact;
+
 }
-.text{  color: coral;
+.text{
+  color: coral;
   line-height: 5vh;
 }
 </style>
