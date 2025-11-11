@@ -1,4 +1,5 @@
 import express from "express"
+import "dotenv/config"
 import  { createNewTable, getTables, insertIntoTable, readTable, deleteTable, clearDatabase, createWeightTable, deleteWeightTable, getColumns } from "./db.ts"
 import type { tableCreator, tableInserter} from "@/types/reqTypes"
 import cors from 'cors'

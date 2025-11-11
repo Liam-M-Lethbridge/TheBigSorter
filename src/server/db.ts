@@ -1,28 +1,42 @@
 import { Criteria } from '../types/reqTypes.ts';
 import postgres from 'postgres';
-const database =  'TheBigSorter';
-const pg_user =  process.env.USER || 'postgres';
-const pg_pass =  (pg_user === 'postgres' ? 'postgres' : undefined);
-const host = 'localhost';
-const port =  5432;
+// const database =  'TheBigSorter';
+// const pg_user =  process.env.USER || 'postgres';
+// const pg_pass =  (pg_user === 'postgres' ? 'postgres' : undefined);
+// const host = 'localhost';
+// const port =  5432;
+// db.ts
+// Create a single, shared connection instance
+export const sql = postgres(process.env.DATABASE_URL!, {
+  // ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
+})
 
-let sql: postgres.Sql;
-try {
-  sql = postgres({
-    host,
-    port,
-    database,
-    username: pg_user,
-    password: pg_pass,
-  });
-} catch (e) {
-  // TODO: This error catch doesn't work (asynchronous callback)
-  console.error(`Caught error: ${e}`);
-  throw new Error(
-    `Couldn't connect to postgres database ${database}. You may need to do \`createdb ${database}\` to set it up.`,
-  );
-}
-export default sql;
+
+
+
+
+
+
+
+
+
+// let sql: postgres.Sql;
+// try {
+//   sql = postgres({
+//     host,
+//     port,
+//     database,
+//     username: pg_user,
+//     password: pg_pass,
+//   });
+// } catch (e) {
+//   // TODO: This error catch doesn't work (asynchronous callback)
+//   console.error(`Caught error: ${e}`);
+//   throw new Error(
+//     `Couldn't connect to postgres database ${database}. You may need to do \`createdb ${database}\` to set it up.`,
+//   );
+// }
+// export default sql;
 
 // had to use sql.unsafe to dynamically do table generation
 export async function createNewTable(tableName: string, attributes: Criteria[]) {
@@ -30,10 +44,10 @@ export async function createNewTable(tableName: string, attributes: Criteria[]) 
   // sanitising inputs to avoid SQL injection
   const safeColumns = attributes
     .map(attr => new Criteria(attr.criterionName.replace(/[^a-zA-Z0-9_]/g, ""), attr.weighting, 0)) // prevent injection
-    .map(attr => `'${attr.criterionName}' TEXT`) // wrap in double quotes for case safety
+    .map(attr => `"${attr.criterionName}" TEXT`) // wrap in double quotes for case safety
     .join(", ")
 
-  const query = `CREATE TABLE IF NOT EXISTS '${safeTableName}' ('name' TEXT, ${safeColumns});`
+  const query = `CREATE TABLE IF NOT EXISTS "${safeTableName}" ("name" TEXT, ${safeColumns});`
 
   await sql.unsafe(query) // "unsafe" lets you run a raw string
   await addWeights(tableName, attributes)
@@ -42,7 +56,7 @@ export async function createNewTable(tableName: string, attributes: Criteria[]) 
 export async function deleteTable(tableName: string) {
   const safeName = tableName.replace(/[^a-zA-Z0-9_]/g, "")
   try{
-  await sql.unsafe(`DROP TABLE IF EXISTS '${safeName}'`)
+  await sql.unsafe(`DROP TABLE IF EXISTS "${safeName}"`)
   } catch (err){
     console.log(err)
     console.log("invalid table name")
@@ -59,11 +73,12 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 `
 }
 
-export async function getColumns(tableName: string){
-  return await sql.unsafe(`SELECT *
-  FROM information_schema.columns
-  WHERE table_name = '${tableName}';
-     `)
+export async function getColumns(tableName: string) {
+  return await sql`
+    SELECT column_name, data_type
+    FROM information_schema.columns
+    WHERE table_name = ${tableName}
+  `
 }
 
 export async function addWeights(tableName: string,attributes:Criteria[]){
@@ -72,7 +87,6 @@ export async function addWeights(tableName: string,attributes:Criteria[]){
 
     await sql`INSERT INTO weights (tablename, attributeName, attributeWeight) VALUES (${tableName}, ${att.criterionName}, ${att.weighting});`
   }
-  // await sql.unsafe(query) // "unsafe" lets you run a raw string
 }
 
 export async function deleteWeightTable(){
@@ -94,7 +108,8 @@ export async function insertIntoTable(tableName: string, attributes: string, val
 }
 
 export async function readTable(tableName: string){
-  const rows = await sql.unsafe(`SELECT * FROM '${tableName}'`)
+  console.log(`Collecting rows from ${tableName}`)
+  const rows = await sql.unsafe(`SELECT * FROM "${tableName}"`)
   return rows
 
 }
