@@ -33,13 +33,14 @@ npm install
 ### Run server for database
 
 ```sh
-npx ts-node src/server/index.ts
+docker compose up -d # runs the database in the docker container in background
+npm run server # runs the server
 ```
 
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run dev
+npm run dev # run the client
 ```
 
 ### Type-Check, Compile and Minify for Production
