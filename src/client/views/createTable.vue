@@ -37,10 +37,10 @@ function deleteCriteria(criterion:Criteria){
       <li v-for="criterion in criteriaList" :key="criterion.id" >
         <div class="row">
           Name:
-          <input v-model="criterion.criterion_name" minlength="1" placeholder="Input criteria" class = "criteriaName" @keypress="filterForSQL"/>
+          <input v-model="criterion.criterionName" minlength="1" placeholder="Input criteria" class = "criteriaName" @keypress="filterForSQL"/>
           Weight:
           <input v-model="criterion.weighting" minlength="1" maxlength="5" placeholder="Weight" class = "criteriaWeight" @keypress="allowOnlyNumbers"/>
-          <button @click="deleteCriteria(criterion)">DEL</button>
+          <button @click="deleteCriteria(criterion)" class = "del">DEL</button>
         </div>
       </li>
 
@@ -51,8 +51,20 @@ function deleteCriteria(criterion:Criteria){
 </template>
 
 <style scoped>
+.del{
+  cursor:pointer;
+  font-size: 15px;
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  background-color: #292D2F;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+  border-width: 3px;
+  color:coral;
+  border-radius: 10px;
+}
 .addCriteria{
   width:auto;
+  cursor:pointer;
   font-size: 15px;
   padding: 2px;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
@@ -66,6 +78,7 @@ function deleteCriteria(criterion:Criteria){
 }
 .addTable{
   width:auto;
+  cursor:pointer;
   padding: 20px;
   font-size: 40px;
   font-family: Impact;
@@ -79,15 +92,12 @@ function deleteCriteria(criterion:Criteria){
   margin-top: auto;
 }
 .row{
-  box-sizing: content-box;
   display: flex;
-  width:100%;
   justify-content: space-around;
   border-bottom: 1px solid #000000;
-  font-family: Impact;
   padding-bottom:2px;
   background-image:linear-gradient(to bottom right, #595d5f, #494d4f);
-
+  align-items: center;
 }
 .criteriaWeight{
   background-color: rgba(0,0,0,0);
@@ -133,15 +143,6 @@ function deleteCriteria(criterion:Criteria){
   display: flex;
   width: 50vw;
   height: 9vh;
-  align-content: space-around;
-  align-items: center;
-  justify-content: center;
-}
-.tablecreator{
-  display: flex;
-  flex-direction: column;
-  width: 50vw;
-  height: 95vh;
   align-content: space-around;
   align-items: center;
   justify-content: center;

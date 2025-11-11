@@ -29,11 +29,11 @@ export async function createNewTable(tableName: string, attributes: Criteria[]) 
   const safeTableName = tableName.replace(/[^a-zA-Z0-9_]/g, "")
   // sanitising inputs to avoid SQL injection
   const safeColumns = attributes
-    .map(attr => new Criteria(attr.criterion_name.replace(/[^a-zA-Z0-9_]/g, ""), attr.weighting, 0)) // prevent injection
-    .map(attr => `"${attr.criterion_name}" TEXT`) // wrap in double quotes for case safety
+    .map(attr => new Criteria(attr.criterionName.replace(/[^a-zA-Z0-9_]/g, ""), attr.weighting, 0)) // prevent injection
+    .map(attr => `'${attr.criterionName}' TEXT`) // wrap in double quotes for case safety
     .join(", ")
 
-  const query = `CREATE TABLE IF NOT EXISTS "${safeTableName}" ("name" TEXT, ${safeColumns});`
+  const query = `CREATE TABLE IF NOT EXISTS '${safeTableName}' ('name' TEXT, ${safeColumns});`
 
   await sql.unsafe(query) // "unsafe" lets you run a raw string
   await addWeights(tableName, attributes)
@@ -42,7 +42,7 @@ export async function createNewTable(tableName: string, attributes: Criteria[]) 
 export async function deleteTable(tableName: string) {
   const safeName = tableName.replace(/[^a-zA-Z0-9_]/g, "")
   try{
-  await sql.unsafe(`DROP TABLE IF EXISTS "${safeName}"`)
+  await sql.unsafe(`DROP TABLE IF EXISTS '${safeName}'`)
   } catch (err){
     console.log(err)
     console.log("invalid table name")
@@ -59,11 +59,18 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 `
 }
 
-export async function addWeights(table_name: string,attributes:Criteria[]){
+export async function getColumns(tableName: string){
+  return await sql.unsafe(`SELECT *
+  FROM information_schema.columns
+  WHERE table_name = '${tableName}';
+     `)
+}
+
+export async function addWeights(tableName: string,attributes:Criteria[]){
 
   for(const att of attributes){
 
-    await sql`INSERT INTO weights (tablename, attributeName, attributeWeight) VALUES (${table_name}, ${att.criterion_name}, ${att.weighting});`
+    await sql`INSERT INTO weights (tablename, attributeName, attributeWeight) VALUES (${tableName}, ${att.criterionName}, ${att.weighting});`
   }
   // await sql.unsafe(query) // "unsafe" lets you run a raw string
 }
@@ -87,7 +94,7 @@ export async function insertIntoTable(tableName: string, attributes: string, val
 }
 
 export async function readTable(tableName: string){
-  const rows = await sql`SELECT * FROM ${tableName}`
+  const rows = await sql.unsafe(`SELECT * FROM '${tableName}'`)
   return rows
 
 }

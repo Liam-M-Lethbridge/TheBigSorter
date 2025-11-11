@@ -47,6 +47,7 @@ import theBigSorter from "../components/bigLogo.vue"
   font-family: Impact;
   padding: 20px;
   font-size: 40px;
+  cursor:pointer;
 }
 .text{
   width: 100%;

@@ -37,3 +37,10 @@ export async function deleteTable(tableName:string){
   const res = await api.post(`/deltable`, {tableName})
   console.log("delted:", res.data)
 }
+
+export async function getColumns(tableName: string){
+  const res = await api.get(`/columns/${tableName}`)
+  console.log("Columns:", res.data)
+  return res.data
+
+}

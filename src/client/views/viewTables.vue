@@ -1,46 +1,127 @@
 <script setup lang="ts">
 import topBar from "../components/topBar.vue"
 import { onMounted, ref } from "vue"
-import { getAllTables, deleteTable } from "../functions"
-const isEmpty = ref(true)
-// const data = ref<{[k:string]: string}[]>([])
-const data = ref<{table_name: string}[]>([])
+import { getAllTables, deleteTable, getTable, getColumns } from "../functions"
+import { Item } from "../../types/reqTypes"
+const isEmptyTables = ref(true)
+const isEmptyItems = ref(true)
+const selectTables = ref(true)
+const tables = ref<{table_name: string}[]>([])
+const items = ref<Item[]>([])
+const currentTable = ref("")
+const columns = ref<string[]>([])
+
 onMounted(async ()=>{
-  data.value = (await getAllTables())
-  console.log(data)
-  isEmpty.value = (data.value.length===0)
+  tables.value = (await getAllTables())
+  console.log(tables)
+  isEmptyTables.value = (tables.value.length===0)
 
 }
 )
 
+function newItem(){
+}
+
+async function toggle(table_name: string | undefined = undefined){
+  selectTables.value=!selectTables.value
+  if( typeof table_name === 'string'){
+    items.value = await getTable(table_name)
+    isEmptyItems.value = (items.value.length===0)
+    currentTable.value = table_name
+    columns.value = await getColumns(table_name)
+  }else{
+    isEmptyItems.value = false
+    currentTable.value = ""
+  }
+}
+
 function removeTable(item: {table_name:string}){
   deleteTable(item.table_name)
-  const index = data.value.indexOf(item)
+  const index = tables.value.indexOf(item)
   if (index > -1) { // only splice array when item is found
-    data.value.splice(index, 1); // 2nd parameter means remove one item only
+    tables.value.splice(index, 1); // 2nd parameter means remove one item only
   }
-  isEmpty.value = (data.value.length===0)
+  isEmptyTables.value = (tables.value.length===0)
 }
 
 </script>
 
 <template>
   <top-bar/>
-  <div class="background">
-    <li v-for="item in data" :key="item['table_name']" class="list">
-      <p class="row">{{ item["table_name"] }}
-        <button class="delete" @click="removeTable(item)" style="float:right;">X</button>
-      </p>
-    </li>
-    <div v-if="isEmpty" class="empty">
-      Wow such empty...
+  <div class="background" >
+    <div class="popup">
+            AH
+
+      </div>
+    <div class="selector" v-if="selectTables">
+      <li v-for="item in tables" :key="item['table_name']" class="list">
+        <div class="row">
+          <button @click="toggle(item.table_name)" class="invisibleButton">{{ item["table_name"] }}</button>
+          <div>
+            <button class="delete">. . .</button>
+            <button class="delete" @click="removeTable(item)">X</button>
+          </div>
+        </div>
+      </li>
+      <div v-if="isEmptyTables" class="empty">
+        Wow such empty...
+      </div>
+    </div>
+    <div class="selector" v-if="!selectTables">
+      <div class="header">
+        {{ currentTable }}
+      </div>
+      <li v-for="item in items" :key="item.itemName" class="list">
+        <p class="row"> <button class="invisibleButton">{{ item.itemName }}</button>
+          <!-- <button class="delete" @click="removeTable(item)" style="float:right;">X</button> -->
+        </p>
+      </li>
+      <div v-if="isEmptyItems" class="empty">
+        Wow such empty...
+      </div>
+      <button class="delete" @click="toggle()">Return to table selection</button>
+      <button class="delete" @click="newItem">New Item</button>
+
     </div>
   </div>
 </template>
 
 <style scoped>
-
-
+.popup{
+  position: absolute;
+  min-height: fit-content;
+  height: 70vh;
+  min-width: fit-content;
+  width:40vw;
+  align-self: center;
+  align-items: center;
+  text-align: center;
+  background-image: linear-gradient(to bottom right, #494d4f, #393d3f );
+  border: 5px solid #fdfdff;
+  border-radius: 15px;
+  margin-top: 5vh;
+}
+.return{
+  width: 100%;
+  height: fit-content;
+  background-color: #292d2f;
+  color: coral;
+  border: 0px;
+}
+.header{
+  display: flex;
+  width: 100%;
+  height: fit-content;
+  background-image: linear-gradient(to bottom right, rgb(255, 157, 120), rgb(255, 127, 80));
+  color: #292d2f;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+.selector{
+  height:100%;
+  width:100%;
+}
 .list{
   list-style-type: none;
   width: 100%;
@@ -49,7 +130,11 @@ function removeTable(item: {table_name:string}){
   color: #fdfdff
 
 }
-
+.invisibleButton{
+  background-color: rgba(0,0,0,0);
+  cursor:pointer;
+  border-width: 0px;
+}
 .delete{
   color: coral;
   background-color: #292d2f;
@@ -58,13 +143,16 @@ function removeTable(item: {table_name:string}){
   border-bottom-color: #ffffff;
   border-width: 3px;
   font-family: Impact;
+  margin-left: 4px;
 }
 .background{
   display: flex;
   flex-direction: column;
   font-family: Impact;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
+  height: fit-content;
+
   align-items:center;
   background-image:linear-gradient(to bottom right, #393d3f, #292d2f);
 }

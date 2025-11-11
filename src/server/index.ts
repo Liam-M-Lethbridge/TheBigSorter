@@ -1,5 +1,5 @@
 import express from "express"
-import  { createNewTable, getTables, insertIntoTable, readTable, deleteTable, clearDatabase, createWeightTable, deleteWeightTable } from "./db.ts"
+import  { createNewTable, getTables, insertIntoTable, readTable, deleteTable, clearDatabase, createWeightTable, deleteWeightTable, getColumns } from "./db.ts"
 import type { tableCreator, tableInserter} from "@/types/reqTypes"
 import cors from 'cors'
 const app = express()
@@ -35,7 +35,20 @@ app.get("/api/tables", async (req, res) => {
   }
 })
 
-// Example: Get items from a table
+// Get columns
+app.get("/api/columns/:table", async (req, res) => {
+  try {
+    const columns = getColumns(req.params.table)
+
+    res.json(columns)
+  }catch (err) {
+    console.error(err)
+    res.status(500).send("Error fetching data")
+  }
+})
+
+
+// Get items from a table
 app.get("/api/:table", async (req, res) => {
   try {
     const rows = readTable(req.params.table)
